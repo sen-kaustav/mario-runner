@@ -37,7 +37,7 @@ export class GameScene extends Phaser.Scene {
     const { width, height } = this.scale;
 
     // Sky background
-    this.add.rectangle(0, 0, width, height, 0x598af0).setOrigin(0);
+    this.add.rectangle(0, 0, width, height, 0x5a86ee).setOrigin(0);
     this.add
       .rectangle(
         0,
@@ -54,17 +54,35 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0);
     this.physics.add.existing(this.ground, true);
 
-    // Main Character
+    // Main Character - Positioned flush against the ground
     this.player = this.physics.add.sprite(
-      60,
-      height - 100 - this.bottomOffset,
-      'player_face',
+      80,
+      height - 125 - this.bottomOffset,
+      'player_run_sheet',
     );
     this.player.setCollideWorldBounds(true);
 
-    // --- FIXED ASPECT RATIO VISUAL PARAMETERS ---
-    // Dynamically configures the width to 70px to preserve the exact 1406x1938 proportions
-    this.player.setDisplaySize(70, 96);
+    // Downscale the high-res asset proportionally to fit nicely inside your screen layout
+    this.player.setScale(0.18);
+
+    // Adjust the physics body collision box bounds to match only the character area, ignoring empty margins
+    if (this.player.body) {
+      this.player.body.setSize(220, 580);
+      this.player.body.setOffset(60, 55);
+    }
+
+    // --- ANIMATION TRACKS REGISTERED ---
+    this.anims.create({
+      key: 'player_run_loop',
+      frames: this.anims.generateFrameNumbers('player_run_sheet', {
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+
+    this.player.play('player_run_loop');
 
     // Spawning pools
     this.obstacles = this.physics.add.group();
@@ -133,10 +151,21 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Keyboard.JustDown(this.cursors.space) ||
       this.isMobileTapped;
     if (isJumpActive && this.player.body && this.player.body.touching.down) {
-      this.player.setVelocityY(-700);
+      this.player.setVelocityY(-720);
       this.playJumpNote();
+
+      this.player.anims.stop();
+      this.player.setFrame(2); // Mid-stride jump frame pose lock
     }
     this.isMobileTapped = false;
+
+    if (
+      this.player.body &&
+      this.player.body.touching.down &&
+      !this.player.anims.isPlaying
+    ) {
+      this.player.play('player_run_loop');
+    }
 
     this.score += 0.1;
     const currentScoreFloor = Math.floor(this.score);
@@ -147,11 +176,16 @@ export class GameScene extends Phaser.Scene {
 
     this.gameSpeed += 6.0 * (delta / 1000);
 
+    if (this.player.anims && this.player.anims.isPlaying) {
+      const speedRatio = this.gameSpeed / 300;
+      this.player.anims.timeScale = Math.min(2.2, speedRatio);
+    }
+
     this.nextObstacleDelay -= delta;
     if (this.nextObstacleDelay <= 0) {
       this.spawnObstacle();
-      const minDelay = Math.max(500, 1300 - (this.gameSpeed - 300) * 1.6);
-      const maxDelay = Math.max(1000, 2500 - (this.gameSpeed - 300) * 1.6);
+      const minDelay = Math.max(600, 1400 - (this.gameSpeed - 300) * 1.6);
+      const maxDelay = Math.max(1100, 2600 - (this.gameSpeed - 300) * 1.6);
       this.nextObstacleDelay = Phaser.Math.Between(minDelay, maxDelay);
     }
 
@@ -282,6 +316,7 @@ export class GameScene extends Phaser.Scene {
   handleGameOver() {
     this.isGameOver = true;
     this.physics.pause();
+    this.player.anims.stop();
     this.player.setTint(0xff3333);
     this.gameOverText.setVisible(true);
     localStorage.setItem('mario_runner_highscore', this.highScore.toString());

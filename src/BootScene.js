@@ -7,16 +7,21 @@ export class BootScene extends Phaser.Scene {
     let loadingText = this.add.text(
       this.scale.width / 2,
       this.scale.height / 2,
-      'Loading Game Assets...',
+      'Loading High-Res Assets...',
       { font: '18px Arial', fill: '#ffffff' },
     );
     loadingText.setOrigin(0.5);
 
-    // Load your transparent player image directly
-    this.load.image('player_face', 'assets/player_image.png');
-  }
+    // FIXED: Pointing to the correct .png extension
+    this.load.spritesheet(
+      'player_run_sheet',
+      'assets/player_image_running_sprite.png',
+      {
+        frameWidth: 345,
+        frameHeight: 635,
+      },
+    );
 
-  create() {
     // --- GENERATE HURDLE PIPES ---
     let pipeCanvas = document.createElement('canvas');
     pipeCanvas.width = 32;
@@ -68,7 +73,9 @@ export class BootScene extends Phaser.Scene {
     ctx3.lineWidth = 1;
     ctx3.strokeRect(0, 0, 32, 32);
     this.textures.addCanvas('ground_block', groundCanvas);
+  }
 
+  create() {
     this.scene.start('GameScene');
   }
 }
