@@ -271,7 +271,7 @@ export class GameScene extends Phaser.Scene {
     const gain = this.audioContext.createGain();
     osc.type = 'triangle';
     osc.frequency.value = currentNote.freq;
-    gain.gain.setValueAtTime(0.12, this.audioContext.currentTime);
+    gain.gain.setValueAtTime(0.7, this.audioContext.currentTime);
     gain.gain.exponentialRampToValueAtTime(
       0.001,
       this.audioContext.currentTime + duration / 1000 - 0.03,
@@ -295,7 +295,7 @@ export class GameScene extends Phaser.Scene {
     osc.type = 'square';
     osc.frequency.setValueAtTime(150, now);
     osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
-    gain.gain.setValueAtTime(0.06, now);
+    gain.gain.setValueAtTime(0.4, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
     osc.connect(gain);
     gain.connect(this.audioContext.destination);
@@ -312,7 +312,7 @@ export class GameScene extends Phaser.Scene {
       const gain = this.audioContext.createGain();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(freq, now + index * 0.15);
-      gain.gain.setValueAtTime(0.15, now + index * 0.15);
+      gain.gain.setValueAtTime(0.7, now + index * 0.15);
       gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.15 + 0.5);
       osc.connect(gain);
       gain.connect(this.audioContext.destination);
