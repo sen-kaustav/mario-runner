@@ -1,4 +1,4 @@
-# Adirun retro style running game
+# "Super Skye Bros" retro style running game
 
 This is simple browser based game created as a fun surprise for Aditya's 32nd birthday.
 

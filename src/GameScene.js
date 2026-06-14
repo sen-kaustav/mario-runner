@@ -20,6 +20,8 @@ export class GameScene extends Phaser.Scene {
     this.highScore =
       parseInt(localStorage.getItem('mario_runner_highscore')) || 0;
 
+    this.isPaused = false;
+
     this.audioContext = null;
     this.audioLoopTimer = null;
     this.currentNoteIndex = 0;
@@ -123,9 +125,25 @@ export class GameScene extends Phaser.Scene {
       this.initAudioContext();
     });
 
+    // Title image at top centre, scaled to fit portrait width
+    const TITLE_SCALE = 0.18;
+    const titleTopMargin = 12;
+
+    this.titleImage = this.add
+      .image(
+        width / 2,
+        titleTopMargin + (861 * TITLE_SCALE) / 2,
+        'game_title',
+      )
+      .setOrigin(0.5);
+    this.titleImage.setScale(TITLE_SCALE);
+
+    const titleBottom =
+      this.titleImage.y + this.titleImage.displayHeight / 2;
+
     // UI Displays
     this.scoreText = this.add
-      .text(width / 2, 40, this.getScoreString(), {
+      .text(width / 2, titleBottom + 28, this.getScoreString(), {
         font: "20px 'Fira Code'",
         fill: '#ffffff',
         stroke: '#000000',
@@ -144,6 +162,24 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setVisible(false);
 
+    this.pausedText = this.add
+      .text(width / 2, height / 2 - 40, 'PAUSED\nPress P to Resume', {
+        font: "20px 'Fira Code'",
+        fill: '#ffffff',
+        align: 'center',
+        stroke: '#000000',
+        strokeThickness: 1,
+      })
+      .setOrigin(0.5)
+      .setVisible(false);
+
+    if (this.sys.game.device.os.desktop) {
+      this.pauseKey = this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.P,
+      );
+      this.pauseKey.on('down', this.togglePause, this);
+    }
+
     this.nextObstacleDelay = Phaser.Math.Between(1200, 2200);
   }
 
@@ -160,6 +196,8 @@ export class GameScene extends Phaser.Scene {
       }
       return;
     }
+
+    if (this.isPaused) return;
 
     this.ground.tilePositionX += this.gameSpeed * (delta / 1000);
 
@@ -345,6 +383,30 @@ export class GameScene extends Phaser.Scene {
       this.audioLoopTimer = null;
     }
     this.currentNoteIndex = 0;
+  }
+
+  togglePause() {
+    if (this.isGameOver || !this.sys.game.device.os.desktop) return;
+
+    this.isPaused = !this.isPaused;
+
+    if (this.isPaused) {
+      this.physics.pause();
+      this.player.anims.pause();
+      this.obstacles.getChildren().forEach((obstacle) => {
+        if (obstacle.anims) obstacle.anims.pause();
+      });
+      this.stopMusic();
+      this.pausedText.setVisible(true);
+    } else {
+      this.physics.resume();
+      this.player.anims.resume();
+      this.obstacles.getChildren().forEach((obstacle) => {
+        if (obstacle.anims) obstacle.anims.resume();
+      });
+      this.playNextNote();
+      this.pausedText.setVisible(false);
+    }
   }
 
   handleGameOver() {

@@ -21,6 +21,9 @@ export class BootScene extends Phaser.Scene {
       },
     );
 
+    // --- GAME TITLE IMAGE ---
+    this.load.image('game_title', 'assets/game_title.png');
+
     // --- DOG OBSTACLE SPRITESHEET ---
     this.load.spritesheet('dog_obstacle', 'assets/dog_obstacle_sprite.png', {
       frameWidth: 624,
