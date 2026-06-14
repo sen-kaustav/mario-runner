@@ -15,7 +15,7 @@ Open `index.html` through a static server, not `file://` (ES modules + CDN scrip
 
 ```bash
 # any of these work
-python -m http.server 8000
+py -m http.server 8000
 npx serve .
 ```
 
@@ -34,3 +34,8 @@ Then open `http://localhost:8000`.
 ## No tooling
 
 There is no package manager, test runner, linter, formatter, CI, or build config. Just edit and reload in the browser.
+
+## Environment notes
+
+- On this Windows machine, use `py` to invoke Python (`python`/`python3` are not in PATH). For example: `py -c "..."` or `py script.py`.
+- Pillow is installed in the `py` environment and has been used for ad-hoc image edits (e.g., making sprite backgrounds transparent).
