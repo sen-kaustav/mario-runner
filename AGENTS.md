@@ -5,6 +5,7 @@
 Browser game with no build step. Plain HTML/ES modules plus Phaser 4 loaded from a CDN.
 
 - Entry: `index.html` → `./src/main.js` (ES module)
+- Styles: `styles.css` (canvas centering + reset)
 - Scenes: `src/BootScene.js` (preload + generated textures), `src/GameScene.js` (gameplay)
 - Asset: `assets/player_image_running_sprite.png` (345×635 spritesheet, 5 frames)
 
@@ -22,7 +23,8 @@ Then open `http://localhost:8000`.
 
 ## Important implementation details
 
-- **Portrait canvas.** Logical resolution is 450×800 with `Phaser.Scale.FIT` + `CENTER_BOTH`. Layout constants assume portrait.
+- **Portrait canvas.** Logical resolution is 450×800 with `Phaser.Scale.FIT`. Centering is handled by CSS (`display: grid; place-items: center`). Layout constants assume portrait.
+- **Font.** `Fira Code` is loaded from Google Fonts and used everywhere (`styles.css` + Phaser text objects). Fall back to generic `monospace`.
 - **Physics.** Arcade physics, gravity `y: 1600`. Ground collider is a static `tileSprite`.
 - **Player sprite scale.** The raw sprite is large (345×635), so the sprite is scaled to `0.18` and the physics body is resized/offset to match the visible character.
 - **Procedural textures.** Pipes, ball, and ground block are drawn to canvases in `BootScene`; only the player spritesheet is loaded from disk.
