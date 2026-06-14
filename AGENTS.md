@@ -27,7 +27,7 @@ Then open `http://localhost:8000`.
 - **Font.** `Fira Code` is loaded from Google Fonts and used everywhere (`styles.css` + Phaser text objects). Fall back to generic `monospace`.
 - **Physics.** Arcade physics, gravity `y: 1600`. Ground collider is a static `tileSprite`.
 - **Player sprite scale.** The raw sprite is large (345×635), so the sprite is scaled to `0.18` and the physics body is resized/offset to match the visible character.
-- **Procedural textures.** Pipes, ball, and ground block are drawn to canvases in `BootScene`; only the player spritesheet is loaded from disk.
+- **Procedural textures.** Pipes and ground block are drawn to canvases in `BootScene`; the player and dog obstacle spritesheets are loaded from disk.
 - **Audio requires interaction.** `AudioContext` is created on the first `pointerdown` because of browser autoplay policies.
 - **High score persistence.** Uses `localStorage` key `mario_runner_highscore`.
 

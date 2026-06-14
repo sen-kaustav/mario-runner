@@ -12,10 +12,10 @@ export class GameScene extends Phaser.Scene {
 
     // Difficulty ramps with score and caps at score 400.
     this.pipeChance = 0.35;
-    this.ballSpeedMultiplier = 1.2;
+    this.dogSpeedMultiplier = 1.2;
     this.DIFFICULTY_RAMP_SCORE = 400;
     this.MAX_PIPE_CHANCE = 0.65;
-    this.MAX_BALL_MULTIPLIER = 1.7;
+    this.MAX_DOG_MULTIPLIER = 1.7;
 
     this.highScore =
       parseInt(localStorage.getItem('mario_runner_highscore')) || 0;
@@ -84,6 +84,16 @@ export class GameScene extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers('player_run_sheet', {
         start: 0,
         end: 4,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: 'dog_run_loop',
+      frames: this.anims.generateFrameNumbers('dog_obstacle', {
+        start: 0,
+        end: 3,
       }),
       frameRate: 12,
       repeat: -1,
@@ -181,13 +191,12 @@ export class GameScene extends Phaser.Scene {
     }
     this.scoreText.setText(this.getScoreString());
 
-    // Ramp difficulty with score: balls get faster and pipes spawn more often.
+    // Ramp difficulty with score: dogs get faster and pipes spawn more often.
     const progress = Math.min(
       currentScoreFloor / this.DIFFICULTY_RAMP_SCORE,
       1,
     );
-    this.ballSpeedMultiplier =
-      1.2 + progress * (this.MAX_BALL_MULTIPLIER - 1.2);
+    this.dogSpeedMultiplier = 1.2 + progress * (this.MAX_DOG_MULTIPLIER - 1.2);
     this.pipeChance = 0.35 + progress * (this.MAX_PIPE_CHANCE - 0.35);
 
     this.gameSpeed += 6.0 * (delta / 1000);
@@ -196,6 +205,13 @@ export class GameScene extends Phaser.Scene {
       const speedRatio = this.gameSpeed / 300;
       this.player.anims.timeScale = Math.min(2.2, speedRatio);
     }
+
+    // Speed up the running dog animation as the game gets faster.
+    this.obstacles.getChildren().forEach((obstacle) => {
+      if (obstacle.anims && obstacle.anims.isPlaying) {
+        obstacle.anims.timeScale = Math.min(2.2, this.gameSpeed / 300);
+      }
+    });
 
     this.nextObstacleDelay -= delta;
     if (this.nextObstacleDelay <= 0) {
@@ -218,20 +234,22 @@ export class GameScene extends Phaser.Scene {
 
   spawnObstacle() {
     const { width, height } = this.scale;
-    const chooseBall = Phaser.Math.RND.frac() > this.pipeChance;
+    const chooseDog = Phaser.Math.RND.frac() > this.pipeChance;
     let obstacle;
 
-    if (chooseBall) {
-      const ballY = height - this.bottomOffset - 32 - 16;
-      obstacle = this.obstacles.create(width + 20, ballY, 'obstacle_ball');
+    if (chooseDog) {
+      const dogY = height - 65 - this.bottomOffset;
+      obstacle = this.obstacles.create(width + 20, dogY, 'dog_obstacle');
       obstacle.setOrigin(0.5);
+      obstacle.setScale(0.3);
 
       if (obstacle.body) {
         obstacle.body.setAllowGravity(false);
         obstacle.body.setImmovable(true);
-        obstacle.setVelocityX(-(this.gameSpeed * this.ballSpeedMultiplier));
-        obstacle.setAngularVelocity(-360);
+        obstacle.setVelocityX(-(this.gameSpeed * this.dogSpeedMultiplier));
       }
+
+      obstacle.play('dog_run_loop');
     } else {
       obstacle = this.obstacles.create(
         width + 20,

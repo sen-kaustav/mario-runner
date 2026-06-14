@@ -22,6 +22,12 @@ export class BootScene extends Phaser.Scene {
       },
     );
 
+    // --- DOG OBSTACLE SPRITESHEET ---
+    this.load.spritesheet('dog_obstacle', 'assets/dog_obstacle_sprite.png', {
+      frameWidth: 290,
+      frameHeight: 224,
+    });
+
     // --- GENERATE HURDLE PIPES ---
     let pipeCanvas = document.createElement('canvas');
     pipeCanvas.width = 32;
@@ -35,32 +41,6 @@ export class BootScene extends Phaser.Scene {
     ctx2.lineWidth = 2;
     ctx2.strokeRect(0, 0, 32, 64);
     this.textures.addCanvas('obstacle_pipe', pipeCanvas);
-
-    // --- GENERATE ROLLING BALL ---
-    let ballCanvas = document.createElement('canvas');
-    ballCanvas.width = 32;
-    ballCanvas.height = 32;
-    let ctxBall = ballCanvas.getContext('2d');
-    ctxBall.beginPath();
-    ctxBall.arc(16, 16, 15, 0, Math.PI * 2);
-    ctxBall.fillStyle = '#fc9c5c';
-    ctxBall.fill();
-    ctxBall.beginPath();
-    ctxBall.moveTo(16, 16);
-    ctxBall.arc(16, 16, 15, 0, Math.PI / 2);
-    ctxBall.fillStyle = '#fc2000';
-    ctxBall.fill();
-    ctxBall.beginPath();
-    ctxBall.moveTo(16, 16);
-    ctxBall.arc(16, 16, 15, Math.PI, Math.PI * 1.5);
-    ctxBall.fillStyle = '#0020b8';
-    ctxBall.fill();
-    ctxBall.beginPath();
-    ctxBall.arc(16, 16, 15, 0, Math.PI * 2);
-    ctxBall.strokeStyle = '#000000';
-    ctxBall.lineWidth = 2;
-    ctxBall.stroke();
-    this.textures.addCanvas('obstacle_ball', ballCanvas);
 
     // --- GENERATE GROUND BLOCK ---
     let groundCanvas = document.createElement('canvas');
