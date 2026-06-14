@@ -35,6 +35,10 @@ Then open `http://localhost:8000`.
 
 There is no package manager, test runner, linter, formatter, CI, or build config. Just edit and reload in the browser.
 
+## Deployment
+
+- **GitHub Pages:** The repo root contains a `.nojekyll` file so GitHub Pages serves the files directly without running Jekyll.
+
 ## Environment notes
 
 - On this Windows machine, use `py` to invoke Python (`python`/`python3` are not in PATH). For example: `py -c "..."` or `py script.py`.
