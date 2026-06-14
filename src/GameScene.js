@@ -10,6 +10,13 @@ export class GameScene extends Phaser.Scene {
     this.nextObstacleDelay = 0;
     this.bottomOffset = 50;
 
+    // Difficulty ramps with score and caps at score 400.
+    this.pipeChance = 0.35;
+    this.ballSpeedMultiplier = 1.2;
+    this.DIFFICULTY_RAMP_SCORE = 400;
+    this.MAX_PIPE_CHANCE = 0.65;
+    this.MAX_BALL_MULTIPLIER = 1.7;
+
     this.highScore =
       parseInt(localStorage.getItem('mario_runner_highscore')) || 0;
 
@@ -174,6 +181,15 @@ export class GameScene extends Phaser.Scene {
     }
     this.scoreText.setText(this.getScoreString());
 
+    // Ramp difficulty with score: balls get faster and pipes spawn more often.
+    const progress = Math.min(
+      currentScoreFloor / this.DIFFICULTY_RAMP_SCORE,
+      1,
+    );
+    this.ballSpeedMultiplier =
+      1.2 + progress * (this.MAX_BALL_MULTIPLIER - 1.2);
+    this.pipeChance = 0.35 + progress * (this.MAX_PIPE_CHANCE - 0.35);
+
     this.gameSpeed += 6.0 * (delta / 1000);
 
     if (this.player.anims && this.player.anims.isPlaying) {
@@ -202,7 +218,7 @@ export class GameScene extends Phaser.Scene {
 
   spawnObstacle() {
     const { width, height } = this.scale;
-    const chooseBall = Phaser.Math.RND.pick([true, false]);
+    const chooseBall = Phaser.Math.RND.frac() > this.pipeChance;
     let obstacle;
 
     if (chooseBall) {
@@ -213,7 +229,7 @@ export class GameScene extends Phaser.Scene {
       if (obstacle.body) {
         obstacle.body.setAllowGravity(false);
         obstacle.body.setImmovable(true);
-        obstacle.setVelocityX(-(this.gameSpeed + 120));
+        obstacle.setVelocityX(-(this.gameSpeed * this.ballSpeedMultiplier));
         obstacle.setAngularVelocity(-360);
       }
     } else {
