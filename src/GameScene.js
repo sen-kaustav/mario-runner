@@ -238,10 +238,10 @@ export class GameScene extends Phaser.Scene {
     let obstacle;
 
     if (chooseDog) {
-      const dogY = height - 65 - this.bottomOffset;
+      const dogY = height - 67 - this.bottomOffset;
       obstacle = this.obstacles.create(width + 20, dogY, 'dog_obstacle');
       obstacle.setOrigin(0.5);
-      obstacle.setScale(0.3);
+      obstacle.setScale(0.15);
 
       if (obstacle.body) {
         obstacle.body.setAllowGravity(false);

@@ -12,7 +12,6 @@ export class BootScene extends Phaser.Scene {
     );
     loadingText.setOrigin(0.5);
 
-    // FIXED: Pointing to the correct .png extension
     this.load.spritesheet(
       'player_run_sheet',
       'assets/player_image_running_sprite.png',
@@ -24,8 +23,8 @@ export class BootScene extends Phaser.Scene {
 
     // --- DOG OBSTACLE SPRITESHEET ---
     this.load.spritesheet('dog_obstacle', 'assets/dog_obstacle_sprite.png', {
-      frameWidth: 290,
-      frameHeight: 224,
+      frameWidth: 624,
+      frameHeight: 422,
     });
 
     // --- GENERATE HURDLE PIPES ---
