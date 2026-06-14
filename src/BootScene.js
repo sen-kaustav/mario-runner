@@ -8,7 +8,7 @@ export class BootScene extends Phaser.Scene {
       this.scale.width / 2,
       this.scale.height / 2,
       'Loading High-Res Assets...',
-      { font: '18px Arial', fill: '#ffffff' },
+      { font: '30px "Fira Code", monospace', fill: '#ffffff' },
     );
     loadingText.setOrigin(0.5);
 
@@ -76,6 +76,13 @@ export class BootScene extends Phaser.Scene {
   }
 
   create() {
-    this.scene.start('GameScene');
+    // Wait for the Google Font to actually load before rendering gameplay text,
+    // otherwise Phaser canvas text falls back to the default system font.
+    Promise.all([
+      document.fonts.load('1em "Fira Code"'),
+      document.fonts.load('1em "Fira Mono"'),
+    ]).then(() => {
+      this.scene.start('GameScene');
+    });
   }
 }

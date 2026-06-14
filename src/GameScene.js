@@ -109,20 +109,20 @@ export class GameScene extends Phaser.Scene {
     // UI Displays
     this.scoreText = this.add
       .text(width / 2, 40, this.getScoreString(), {
-        font: '20px Courier New',
+        font: '30px "Fira Code", monospace',
         fill: '#ffffff',
         stroke: '#000000',
-        strokeThickness: 5,
+        strokeThickness: 3,
       })
       .setOrigin(0.5);
 
     this.gameOverText = this.add
       .text(width / 2, height / 2 - 40, 'GAME OVER\nTap to Try Again', {
-        font: '26px Courier New',
+        font: '30px "Fira Code", monospace',
         fill: '#ffffff',
         align: 'center',
         stroke: '#000000',
-        strokeThickness: 6,
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
       .setVisible(false);
