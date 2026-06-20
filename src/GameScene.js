@@ -21,6 +21,7 @@ export class GameScene extends Phaser.Scene {
       parseInt(localStorage.getItem('mario_runner_highscore')) || 0;
 
     this.isPaused = false;
+    this.isStarted = false;
 
     this.audioContext = null;
     this.audioLoopTimer = null;
@@ -101,7 +102,7 @@ export class GameScene extends Phaser.Scene {
       repeat: -1,
     });
 
-    this.player.play('player_run_loop');
+    this.player.setFrame(0);
 
     // Spawning pools
     this.obstacles = this.physics.add.group();
@@ -173,6 +174,17 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setVisible(false);
 
+    this.startText = this.add
+      .text(width / 2, height / 2 - 40, 'Tap to Start', {
+        font: "20px 'Fira Code'",
+        fill: '#ffffff',
+        align: 'center',
+        stroke: '#000000',
+        strokeThickness: 1,
+      })
+      .setOrigin(0.5)
+      .setVisible(true);
+
     if (this.sys.game.device.os.desktop) {
       this.pauseKey = this.input.keyboard.addKey(
         Phaser.Input.Keyboard.KeyCodes.P,
@@ -193,6 +205,18 @@ export class GameScene extends Phaser.Scene {
         this.isMobileTapped = false;
         this.stopMusic();
         this.scene.restart();
+      }
+      return;
+    }
+
+    if (!this.isStarted) {
+      if (
+        Phaser.Input.Keyboard.JustDown(this.cursors.space) ||
+        Phaser.Input.Keyboard.JustDown(this.cursors.up) ||
+        this.isMobileTapped
+      ) {
+        this.isMobileTapped = false;
+        this.startGame();
       }
       return;
     }
@@ -407,6 +431,13 @@ export class GameScene extends Phaser.Scene {
       this.playNextNote();
       this.pausedText.setVisible(false);
     }
+  }
+
+  startGame() {
+    this.isStarted = true;
+    this.startText.setVisible(false);
+    this.player.play('player_run_loop');
+    this.initAudioContext();
   }
 
   handleGameOver() {
